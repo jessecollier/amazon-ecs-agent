@@ -211,18 +211,10 @@ func (task *Task) dockerConfig(container *Container) (*docker.Config, *DockerCli
 		entryPoint = *container.EntryPoint
 	}
 
-	logConfig := &docker.LogConfig{
-		Type:   "syslog",
-		Config: map[string]string{
-			"syslog-address":  "unix:///dev/log"
-		}
-	}
-
 	config := &docker.Config{
 		Image:        container.Image,
 		Cmd:          container.Command,
 		Entrypoint:   entryPoint,
-		LogConfig:    logConfig,
 		ExposedPorts: task.dockerExposedPorts(container),
 		Volumes:      dockerVolumes,
 		Env:          dockerEnv,
@@ -302,9 +294,17 @@ func (task *Task) dockerHostConfig(container *Container, dockerContainerMap map[
 		return nil, &HostConfigError{err.Error()}
 	}
 
+	logConfig := &docker.LogConfig{
+		Type:   "syslog",
+		Config: map[string]string{
+			"syslog-address":  "unix:///dev/log",
+		},
+	}
+
 	hostConfig := &docker.HostConfig{
 		Links:        dockerLinkArr,
 		Binds:        binds,
+		LogConfig:    logConfig,
 		PortBindings: dockerPortMap,
 		VolumesFrom:  volumesFrom,
 	}
