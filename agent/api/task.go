@@ -294,7 +294,7 @@ func (task *Task) dockerHostConfig(container *Container, dockerContainerMap map[
 		return nil, &HostConfigError{err.Error()}
 	}
 
-	logConfig := &docker.LogConfig{
+	logConfig := docker.LogConfig{
 		Type:   "syslog",
 		Config: map[string]string{
 			"syslog-address":  "unix:///dev/log",
