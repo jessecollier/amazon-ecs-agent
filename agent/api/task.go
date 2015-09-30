@@ -296,8 +296,7 @@ func (task *Task) dockerHostConfig(container *Container, dockerContainerMap map[
 
 
 	// Default for Type is "json-file" and Config is empty {}
-	_logType := "json-file"
-	_logConfig := make(map[string]string)
+	_logType, _logConfig := "json-file", make(map[string]string)
 	
 	// Allows custom configuration via environment vars
 	for envKey, envVal := range container.Environment {
