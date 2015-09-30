@@ -294,9 +294,24 @@ func (task *Task) dockerHostConfig(container *Container, dockerContainerMap map[
 		return nil, &HostConfigError{err.Error()}
 	}
 
+
+	_logType, _logConfig := nil, make(map[string]string)
+	for envKey, envVal := range container.Environment {
+		if(envKey == "LOG_DRIVER"){
+			// ie LOG_DRIVER="syslog"
+			logDriver := envVal
+		}
+		if(strings.HasPrefix(envKey, "LOG_CONFIG")){
+			// Split on semicolon.
+			// LOG_CONFIG_1="syslog-address=udp://127.0.0.1:514"
+    		config := strings.Split(envVal, "=")
+    		logConfig[config[0]] = config[1]
+    	}
+	}
+
 	logConfig := docker.LogConfig{
-		Type:   "syslog",
-		Config: map[string]string{},
+		Type:   _logType,
+		Config: _logConfig,
 	}
 
 	hostConfig := &docker.HostConfig{
